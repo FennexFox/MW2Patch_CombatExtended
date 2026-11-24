@@ -4,7 +4,7 @@ These instructions apply throughout the repository unless a closer AGENTS.md sup
 
 ## Project and sources
 
-This mod connects the ModularWeapons 2 (MW2) gunsmith workbench and parts system to Combat Extended (CE). Follow the load order in README.md: ModularWeapons 2, Combat Extended, then this patch. The [compatibility roadmap](https://github.com/FennexFox/MW2Patch_CombatExtended/issues/4) records the RimWorld 1.6 targets and phase dependencies.
+This mod connects the ModularWeapons 2 (MW2) gunsmith workbench and parts system to Combat Extended (CE). Follow the load order in README.md: ModularWeapons 2, Combat Extended, then this patch. The [compatibility roadmap](https://github.com/FennexFox/MW2Patch_CombatExtended/issues/4) records the RimWorld 1.7 targets and phase dependencies.
 
 - Inspect the matching RimWorld version and add-on definitions before editing. Use exact defName values, including upstream spelling. Read inherited definitions and conditional patches when determining the effective configuration.
 - The C# solution contains the integration code. Start with MW2Patch_CombatExtended.cs and the relevant MW2PartsExtension_CE* file for changes to ammunition, fire modes, bipods, or underbarrel behavior. For weapon-specific slots and graphics, inspect the XML shipped with the matching MW2 and [patch release](https://github.com/kaitorisenkou/MW2Patch_CombatExtended/releases). Release archives can contain assets absent from the source checkout.
@@ -13,7 +13,7 @@ This mod connects the ModularWeapons 2 (MW2) gunsmith workbench and parts system
 
 ## Verification
 
-- For C# changes, build MW2Patch_CombatExtended.sln with MSBuild and the .NET Framework 4.7.2 targeting pack. Check the project reference paths for Harmony, RimWorld, CE, and MW2 before diagnosing a build failure.
+- For C# changes, build MW2Patch_CombatExtended.sln using the 1.7 build procedure in README.md. Check the project reference paths for Harmony, RimWorld, CE, and MW2 before diagnosing a build failure.
 - For XML changes, check that each target and part resolves with the intended mods loaded. Inspect startup logs for patch failures. Test the base configuration, the affected add-on, and any add-on combination whose behavior the change touches.
 - At the gunsmith workbench, fit and remove the affected parts, inspect sprite alignment, and save and reload a modified weapon. Exercise the CE features that the weapon uses. For the KSG, this includes switching and reloading both magazines after customization.
 - Record the game and mod versions, configurations tested, and observed results. Identify checks still pending, especially when only source inspection or a build was possible.

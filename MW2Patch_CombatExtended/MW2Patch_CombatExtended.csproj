@@ -1,66 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{631001A4-2002-44BB-8C61-92AB7218FEB8}</ProjectGuid>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14</LangVersion>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MW2Patch_CombatExtended</RootNamespace>
     <AssemblyName>MW2Patch_CombatExtended</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Deterministic>true</Deterministic>
+    <RimWorld17Dir Condition="'$(RimWorld17Dir)' == ''">$(MW2CE_RIMWORLD17_DIR)</RimWorld17Dir>
+    <CombatExtendedReference Condition="'$(CombatExtendedReference)' == ''">$(RimWorld17Dir)\Mods\CombatExtended\Assemblies\CombatExtended.dll</CombatExtendedReference>
+    <HarmonyReference Condition="'$(HarmonyReference)' == ''">$(RimWorld17Dir)\Mods\Harmony\1.7\Assemblies\0Harmony.dll</HarmonyReference>
+    <ModularWeapons2Reference Condition="'$(ModularWeapons2Reference)' == ''">$(RimWorld17Dir)\Mods\ModularWeapons2\1.7\Assemblies\ModularWeapons2.dll</ModularWeapons2Reference>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
+  <Target Name="ValidateBuildReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="'$(RimWorld17Dir)' == ''" Text="Set RimWorld17Dir (or MW2CE_RIMWORLD17_DIR) to the RimWorld 1.7 game directory." />
+    <Error Condition="!Exists('$(RimWorld17Dir)\Assembly-CSharp.dll')" Text="RimWorld 1.7 Assembly-CSharp.dll was not found under $(RimWorld17Dir)." />
+    <Error Condition="!Exists('$(CombatExtendedReference)')" Text="Combat Extended reference assembly was not found at $(CombatExtendedReference)." />
+    <Error Condition="!Exists('$(HarmonyReference)')" Text="Harmony 1.7 assembly was not found at $(HarmonyReference)." />
+    <Error Condition="!Exists('$(ModularWeapons2Reference)')" Text="ModularWeapons2 1.7 assembly was not found at $(ModularWeapons2Reference)." />
+  </Target>
+
   <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\Documents\RimworldDlls\16\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="CombatExtended">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\294100\2890901044\Assemblies\CombatExtended.dll</HintPath>
-    </Reference>
-    <Reference Include="ModularWeapons2">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\ModularWeapons2\1.6\Assemblies\ModularWeapons2.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Reference Include="0Harmony" HintPath="$(HarmonyReference)" Private="false" />
+    <Reference Include="Assembly-CSharp" HintPath="$(RimWorld17Dir)\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="CombatExtended" HintPath="$(CombatExtendedReference)" Private="false" />
+    <Reference Include="ModularWeapons2" HintPath="$(ModularWeapons2Reference)" Private="false" />
+    <Reference Include="UnityStubs" HintPath="$(RimWorld17Dir)\UnityStubs.dll" Private="false" />
+    <Reference Include="Waylith" HintPath="$(RimWorld17Dir)\Waylith.dll" Private="false" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="MW2CE_BreakpointActions.cs" />
-    <Compile Include="MW2PartsExtension_CEAmmoUser.cs" />
-    <Compile Include="MW2PartsExtension_CEBipod.cs" />
-    <Compile Include="MW2PartsExtension_CEFireModes.cs" />
-    <Compile Include="MW2PartsExtension_CEUnderbarrel.cs" />
-    <Compile Include="MW2Patch_CombatExtended.cs" />
-    <Compile Include="MW2CE_DefOf.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

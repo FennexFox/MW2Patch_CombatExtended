@@ -395,21 +395,23 @@ namespace MW2Patch_CombatExtended {
         }
         public static float GetOverriddenShotSpread(float defaultValue, Verb_LaunchProjectileCE verb) {
             DebugLogMessage("[MW2CE] GetOverriddenShotSpread: defaultValue " + defaultValue);
-            var eq = verb?.EquipmentSource;
-            if (eq == null) {
+            var equipment = verb?.EquipmentSource;
+            var underBarrel = equipment?.TryGetComp<CompUnderBarrel>();
+            if (underBarrel == null || !underBarrel.usingUnderBarrel) {
                 return defaultValue;
             }
-            var compUB = eq.TryGetComp<CompUnderBarrel>();
-            if (compUB == null || !compUB.usingUnderBarrel) {
-                return defaultValue;
-            }
-            var ext =
-                verb?.EquipmentSource?.TryGetComp<CompModularWeapon>()?
+
+            var modularWeapon = equipment.TryGetComp<CompModularWeapon>();
+            var extensions = modularWeapon?
                 .GetAllModExtensionsFromParts<MW2PartsExtension_CEUnderbarrel>();
-            foreach(var i in ext) {
-                if (i.ShotSpreadOverride >= 0) {
-                    DebugLogMessage("[MW2CE] override in GetOverriddenShotSpread -> " + i.ShotSpreadOverride);
-                    return i.ShotSpreadOverride;
+            if (extensions == null) {
+                return defaultValue;
+            }
+
+            foreach (var extension in extensions) {
+                if (extension != null && extension.ShotSpreadOverride >= 0) {
+                    DebugLogMessage("[MW2CE] override in GetOverriddenShotSpread -> " + extension.ShotSpreadOverride);
+                    return extension.ShotSpreadOverride;
                 }
             }
             return defaultValue;
