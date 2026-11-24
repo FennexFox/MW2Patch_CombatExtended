@@ -24,15 +24,15 @@ Use delegation when a bounded investigation or implementation can proceed indepe
 
 | Role | Model and effort | Suitable work |
 | --- | --- | --- |
-| Coordinator | GPT-6 Astra, low | Plan the change, divide work, integrate findings, and perform final checks. |
-| Inventory worker | GPT-5.6 Luna, low | Locate definitions and usages, compare weapon lists, or classify log entries. |
-| Bounded analysis worker | GPT-5.6 Luna, medium | Trace a specific XML target or make a small, mechanically specified edit. |
-| Default implementation worker | GPT-5.6 Luna, xhigh | Implement scoped patches, debug localized behavior, and add relevant regression coverage. |
-| Deeper bounded investigation | GPT-5.6 Luna, max | Revisit an incomplete xhigh result when several local causes need comparison or verification. |
-| Integration worker | GPT-5.6 Sol, medium | Resolve interactions spanning MW2 parts, CE components, XML inheritance, or save state. Escalate directly here when context breadth is the difficulty. |
-| Difficult implementation | GPT-5.6 Sol, high | Handle persistent cross-component bugs or state transitions that Sol medium could not resolve. |
-| Coordinator escalation | GPT-6 Astra, medium | Reassess a disproved assumption, reconcile conflicting source and runtime evidence, or decide an architectural change. |
-| Exceptional coordinator escalation | GPT-6 Astra, high | Resolve a high-impact decision that remains open after Astra medium. |
+| Coordinator | `gpt-6.2-astra`, low | Plan the change, divide work, integrate findings, and perform final checks. |
+| Inventory worker | `gpt-6-luna`, low | Locate definitions and usages, compare weapon lists, or classify log entries. |
+| Bounded analysis worker | `gpt-6-luna`, medium | Trace a specific XML target or make a small, mechanically specified edit. |
+| Default implementation worker | `gpt-6-luna`, xhigh | Implement scoped patches, debug localized behavior, and add relevant regression coverage. |
+| Deeper bounded investigation | `gpt-6-luna`, max | Revisit an incomplete xhigh result when several local causes need comparison or verification. |
+| Integration worker | `gpt-6.2-sol`, medium | Resolve interactions spanning MW2 parts, CE components, XML inheritance, or save state. Escalate directly here when context breadth is the difficulty. |
+| Difficult implementation | `gpt-6.2-sol`, high | Handle persistent cross-component bugs or state transitions that Sol medium could not resolve. |
+| Coordinator escalation | `gpt-6.2-astra`, medium | Reassess a disproved assumption, reconcile conflicting source and runtime evidence, or decide an architectural change. |
+| Exceptional coordinator escalation | `gpt-6.2-astra`, high | Resolve a high-impact decision that remains open after Astra medium. |
 
 Give each worker a fresh, narrow context, a concrete question, and an expected deliverable. Select both model and effort explicitly when supported. Assign separate write scopes to concurrent workers. Ask for inspected paths or symbols, observed results, checks run, and unresolved assumptions.
 
