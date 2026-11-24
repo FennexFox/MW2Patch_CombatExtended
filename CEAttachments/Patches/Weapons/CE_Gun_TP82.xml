@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationSequence">
+    <operations>
+      <li Class="PatchOperationReplace">
+        <xpath>/Defs/ThingDef[defName="CE_Gun_TP_EightyTwo"]/graphicData/graphicClass</xpath>
+        <value>
+          <graphicClass>ModularWeapons2.Graphic_UniqueByComp</graphicClass>
+        </value>
+      </li>
+      <li Class="PatchOperationConditional">
+        <xpath>/Defs/ThingDef[defName="CE_Gun_TP_EightyTwo"]/graphicData/drawSize</xpath>
+        <match Class="PatchOperationReplace">
+          <xpath>/Defs/ThingDef[defName="CE_Gun_TP_EightyTwo"]/graphicData/drawSize</xpath>
+          <value>
+            <drawSize>1.84</drawSize>
+          </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+          <xpath>/Defs/ThingDef[defName="CE_Gun_TP_EightyTwo"]/graphicData</xpath>
+          <value>
+            <drawSize>1.84</drawSize>
+          </value>
+        </nomatch>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>/Defs/ThingDef[defName="CE_Gun_TP_EightyTwo"]/comps</xpath>
+        <value>
+          <li Class="ModularWeapons2.CompProperties_ModularWeapon">
+            <baseGraphicData>
+              <texPath>Things/Weapons/TP-82</texPath>
+              <graphicClass>Graphic_Single</graphicClass>
+              <drawSize>(0.92,0.92)</drawSize>
+            </baseGraphicData>
+            <partsMounts>
+              <!-- Keep the third barrel in CE's native underbarrel component. -->
+              <li>
+                <mountDef>MountSight_Micro</mountDef>
+                <offset>(0.02,0.15)</offset>
+                <adapterGraphic>
+                  <texPath>ModularParts/Adapters/Upward_Short</texPath>
+                  <graphicClass>Graphic_Single</graphicClass>
+                </adapterGraphic>
+                <layerOrder>1</layerOrder>
+              </li>
+              <li>
+                <mountDef>MountTacDevice_Side</mountDef>
+                <offset>(0.12,0.02)</offset>
+                <adapterGraphic>
+                  <texPath>ModularParts/Adapters/Side</texPath>
+                  <graphicClass>Graphic_Single</graphicClass>
+                </adapterGraphic>
+                <layerOrder>2</layerOrder>
+              </li>
+            </partsMounts>
+          </li>
+        </value>
+      </li>
+    </operations>
+  </Operation>
+</Patch>

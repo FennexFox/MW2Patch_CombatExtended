@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationSequence">
+    <operations>
+      <li Class="PatchOperationReplace">
+        <xpath>/Defs/ThingDef[defName="CE_Gun_AKMGL"]/graphicData/graphicClass</xpath>
+        <value>
+          <graphicClass>ModularWeapons2.Graphic_UniqueByComp</graphicClass>
+        </value>
+      </li>
+      <li Class="PatchOperationConditional">
+        <xpath>/Defs/ThingDef[defName="CE_Gun_AKMGL"]/graphicData/drawSize</xpath>
+        <match Class="PatchOperationReplace">
+          <xpath>/Defs/ThingDef[defName="CE_Gun_AKMGL"]/graphicData/drawSize</xpath>
+          <value>
+            <drawSize>2</drawSize>
+          </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+          <xpath>/Defs/ThingDef[defName="CE_Gun_AKMGL"]/graphicData</xpath>
+          <value>
+            <drawSize>2</drawSize>
+          </value>
+        </nomatch>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>/Defs/ThingDef[defName="CE_Gun_AKMGL"]/comps</xpath>
+        <value>
+          <li Class="ModularWeapons2.CompProperties_ModularWeapon">
+            <baseGraphicData>
+              <texPath>Things/Weapons/AKM_GL</texPath>
+              <graphicClass>Graphic_Single</graphicClass>
+            </baseGraphicData>
+            <partsMounts>
+              <!-- The CE GP-25 already occupies the underbarrel function. -->
+              <li>
+                <mountDef>MountSight_Short</mountDef>
+                <offset>(-0.02,0.12)</offset>
+                <adapterGraphic>
+                  <texPath>ModularParts/Adapters/Upward_Bridge</texPath>
+                  <graphicClass>Graphic_Single</graphicClass>
+                </adapterGraphic>
+                <layerOrder>1</layerOrder>
+              </li>
+              <li>
+                <mountDef>MountMuzzle_Assault</mountDef>
+                <offset>(0.45,0.0)</offset>
+                <layerOrder>1</layerOrder>
+              </li>
+              <li>
+                <mountDef>MountTacDevice_Side</mountDef>
+                <offset>(0.20,0.03)</offset>
+                <adapterGraphic>
+                  <texPath>ModularParts/Adapters/Side</texPath>
+                  <graphicClass>Graphic_Single</graphicClass>
+                </adapterGraphic>
+                <layerOrder>2</layerOrder>
+              </li>
+            </partsMounts>
+          </li>
+        </value>
+      </li>
+    </operations>
+  </Operation>
+</Patch>

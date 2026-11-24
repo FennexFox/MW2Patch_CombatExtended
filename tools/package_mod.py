@@ -30,8 +30,9 @@ def main():
     files[DLL] = assembly
     for name in ("About/About.xml", "loadFolders.xml"):
         files[name] = (ROOT / "packaging" / name).read_bytes()
-    for patch in (ROOT / "Common").rglob("*.xml"):
-        files[patch.relative_to(ROOT).as_posix()] = patch.read_bytes()
+    for folder in ("Common", "CEAttachments"):
+        for patch in (ROOT / folder).rglob("*.xml"):
+            files[patch.relative_to(ROOT).as_posix()] = patch.read_bytes()
     files["LICENCE"] = (ROOT / "LICENCE").read_bytes()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory(dir=args.output.parent) as directory:

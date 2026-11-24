@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationSequence">
+    <operations>
+      <li Class="PatchOperationReplace">
+        <xpath>/Defs/ThingDef[defName="CE_Gun_LeMatRevolver"]/graphicData/graphicClass</xpath>
+        <value>
+          <graphicClass>ModularWeapons2.Graphic_UniqueByComp</graphicClass>
+        </value>
+      </li>
+      <li Class="PatchOperationConditional">
+        <xpath>/Defs/ThingDef[defName="CE_Gun_LeMatRevolver"]/graphicData/drawSize</xpath>
+        <match Class="PatchOperationReplace">
+          <xpath>/Defs/ThingDef[defName="CE_Gun_LeMatRevolver"]/graphicData/drawSize</xpath>
+          <value>
+            <drawSize>2</drawSize>
+          </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+          <xpath>/Defs/ThingDef[defName="CE_Gun_LeMatRevolver"]/graphicData</xpath>
+          <value>
+            <drawSize>2</drawSize>
+          </value>
+        </nomatch>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>/Defs/ThingDef[defName="CE_Gun_LeMatRevolver"]/comps</xpath>
+        <value>
+          <li Class="ModularWeapons2.CompProperties_ModularWeapon">
+            <baseGraphicData>
+              <texPath>Things/Weapons/LeMatRevolver</texPath>
+              <graphicClass>Graphic_Single</graphicClass>
+            </baseGraphicData>
+            <partsMounts>
+              <!-- LeMat's built-in lower barrel remains the CE underbarrel. -->
+              <li>
+                <mountDef>MountSight_Micro</mountDef>
+                <offset>(-0.02,0.16)</offset>
+                <adapterGraphic>
+                  <texPath>ModularParts/Adapters/Upward_Short</texPath>
+                  <graphicClass>Graphic_Single</graphicClass>
+                </adapterGraphic>
+                <layerOrder>1</layerOrder>
+              </li>
+              <li>
+                <mountDef>MountTacDevice_Side</mountDef>
+                <offset>(0.10,0.04)</offset>
+                <adapterGraphic>
+                  <texPath>ModularParts/Adapters/Side</texPath>
+                  <graphicClass>Graphic_Single</graphicClass>
+                </adapterGraphic>
+                <layerOrder>2</layerOrder>
+              </li>
+            </partsMounts>
+          </li>
+        </value>
+      </li>
+    </operations>
+  </Operation>
+</Patch>

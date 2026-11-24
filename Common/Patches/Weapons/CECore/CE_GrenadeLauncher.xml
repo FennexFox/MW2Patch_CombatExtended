@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <!-- Keep CE's grenade-launcher verb and ammo component; only replace the renderer. -->
+  <Operation Class="PatchOperationReplace">
+    <xpath>/Defs/ThingDef[defName="CE_GrenadeLauncher"]/graphicData</xpath>
+    <value>
+      <graphicData>
+        <texPath>Things/Weapons/CE_GrenadeLauncher</texPath>
+        <graphicClass>ModularWeapons2.Graphic_UniqueByComp</graphicClass>
+        <drawSize>2</drawSize>
+      </graphicData>
+    </value>
+  </Operation>
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/ThingDef[defName="CE_GrenadeLauncher"]/comps</xpath>
+    <value>
+      <li Class="ModularWeapons2.CompProperties_ModularWeapon">
+        <baseGraphicData>
+          <texPath>Things/Weapons/CE_GrenadeLauncher</texPath>
+          <graphicClass>Graphic_Single</graphicClass>
+        </baseGraphicData>
+        <partsMounts>
+          <li>
+            <mountDef>MountSight_Short</mountDef>
+            <offset>(0.02,0.07)</offset>
+            <layerOrder>1</layerOrder>
+          </li>
+          <li>
+            <mountDef>MountTacDevice_Side</mountDef>
+            <offset>(0.12,0.02)</offset>
+            <adapterGraphic>
+              <texPath>ModularParts/Adapters/Side</texPath>
+              <graphicClass>Graphic_Single</graphicClass>
+            </adapterGraphic>
+            <layerOrder>2</layerOrder>
+          </li>
+        </partsMounts>
+      </li>
+    </value>
+  </Operation>
+</Patch>
