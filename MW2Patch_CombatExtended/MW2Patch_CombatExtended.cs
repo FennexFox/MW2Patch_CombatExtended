@@ -44,6 +44,9 @@ namespace MW2Patch_CombatExtended {
                 AccessTools.Method(typeof(CompFireModes), nameof(CompFireModes.Initialize)),
                 postfix: new HarmonyMethod(typeof(MW2Patch_CombatExtended), nameof(Postfix_CompFireModeInit), null));
             harmony.Patch(
+                AccessTools.Method(typeof(CompFireModes), nameof(CompFireModes.InitAvailableFireModes)),
+                prefix: new HarmonyMethod(typeof(MW2Patch_CombatExtended), nameof(Prefix_InitAvailableFireModes)));
+            harmony.Patch(
                 AccessTools.Method(typeof(PawnCapacityUtility), nameof(PawnCapacityUtility.CalculateNaturalPartsAverageEfficiency)),
                 prefix: new HarmonyMethod(typeof(MW2Patch_CombatExtended), nameof(Prefix_CalculateNaturalPartsAverageEfficiency), null));
             harmony.Patch(
@@ -222,6 +225,13 @@ namespace MW2Patch_CombatExtended {
         }
         static void Postfix_CompFireModeInit(/*CompFireModes __instance, */ref Verb ___verbInt) {
             ___verbInt = null;
+        }
+
+        static void Prefix_InitAvailableFireModes(CompFireModes __instance) {
+            // CE clears fire modes but appends aim modes each time a modular verb is rebuilt.
+            if (__instance.parent.TryGetComp<CompModularWeapon>() != null) {
+                __instance.AvailableAimModes.Clear();
+            }
         }
 
         /// <summary>

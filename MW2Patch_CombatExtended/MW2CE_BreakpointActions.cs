@@ -13,6 +13,8 @@ namespace MW2Patch_CombatExtended {
     public static class MW2CE_BreakpointActions {
         private static readonly AccessTools.FieldRef<CompFireModes, Verb> CachedFireModeVerb =
             AccessTools.FieldRefAccess<CompFireModes, Verb>("verbInt");
+        private static readonly AccessTools.FieldRef<CompAmmoUser, AmmoDef> StoredCurrentAmmo =
+            AccessTools.FieldRefAccess<CompAmmoUser, AmmoDef>("currentAmmoInt");
 
         public static void PostOpenGunsmith(Thing thing) {
             /* What to code here is:
@@ -79,7 +81,8 @@ namespace MW2Patch_CombatExtended {
                             Math.Max(0, desiredAmmoProps.magazineSize));
                     }
                     else {
-                        var currentAmmo = compAmmo.CurrentAmmo;
+                        // CE hides CurrentAmmo while its ammo system is disabled.
+                        var currentAmmo = StoredCurrentAmmo(compAmmo);
                         var selectedAmmo = compAmmo.SelectedAmmo;
                         compAmmo.Initialize(desiredAmmoProps);
 
@@ -95,7 +98,7 @@ namespace MW2Patch_CombatExtended {
                             compAmmo.SelectedAmmo = selectedAmmo;
                         }
                         else {
-                            compAmmo.SelectedAmmo = compAmmo.CurrentAmmo;
+                            compAmmo.SelectedAmmo = StoredCurrentAmmo(compAmmo);
                         }
 
                         compAmmo.CurMagCount = Math.Min(
@@ -105,15 +108,9 @@ namespace MW2Patch_CombatExtended {
                 }
             }
 
-            var baseFireModeProps = thing.def.comps?.FirstOrDefault(x => x is CompProperties_FireModes) as CompProperties_FireModes;
             var desiredFireModeProps = comp.GetCompProps_FireModes();
-            var hasFireModeExtensions = desiredFireModeProps != null && !ReferenceEquals(desiredFireModeProps, baseFireModeProps);
-            var currentPrimaryFireModeProps = compUnderBarrel?._compPropsFireModes
-                ?? (usingSecondary ? baseFireModeProps : compFireModes?.props as CompProperties_FireModes);
-            var shouldRefreshFireModes = desiredFireModeProps != null
-                && (hasFireModeExtensions || !ReferenceEquals(currentPrimaryFireModeProps, baseFireModeProps));
-
-            if (shouldRefreshFireModes) {
+            // A part can change the primary verb's burst count without changing the CE props.
+            if (desiredFireModeProps != null) {
                 if (compUnderBarrel != null) {
                     compUnderBarrel._compPropsFireModes = desiredFireModeProps;
                 }
