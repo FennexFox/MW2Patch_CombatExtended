@@ -1,35 +1,37 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net472;net10.0</TargetFrameworks>
+    <RimWorldVersion Condition="'$(TargetFramework)' == 'net472'">1.6</RimWorldVersion>
+    <RimWorldVersion Condition="'$(TargetFramework)' == 'net10.0'">1.7</RimWorldVersion>
     <LangVersion>14</LangVersion>
-    <OutputType>Library</OutputType>
-    <RootNamespace>MW2Patch_CombatExtended</RootNamespace>
-    <AssemblyName>MW2Patch_CombatExtended</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Deterministic>true</Deterministic>
+    <RimWorld16Dir Condition="'$(RimWorld16Dir)' == ''">$(MW2CE_RIMWORLD16_DIR)</RimWorld16Dir>
     <RimWorld17Dir Condition="'$(RimWorld17Dir)' == ''">$(MW2CE_RIMWORLD17_DIR)</RimWorld17Dir>
-    <CombatExtendedReference Condition="'$(CombatExtendedReference)' == ''">$(RimWorld17Dir)\Mods\CombatExtended\Assemblies\CombatExtended.dll</CombatExtendedReference>
-    <HarmonyReference Condition="'$(HarmonyReference)' == ''">$(RimWorld17Dir)\Mods\Harmony\1.7\Assemblies\0Harmony.dll</HarmonyReference>
-    <ModularWeapons2Reference Condition="'$(ModularWeapons2Reference)' == ''">$(RimWorld17Dir)\Mods\ModularWeapons2\1.7\Assemblies\ModularWeapons2.dll</ModularWeapons2Reference>
+    <GameDir Condition="'$(RimWorldVersion)' == '1.6'">$(RimWorld16Dir)</GameDir>
+    <GameDir Condition="'$(RimWorldVersion)' == '1.7'">$(RimWorld17Dir)</GameDir>
+    <ManagedDir Condition="'$(RimWorldVersion)' == '1.6'">$(GameDir)/RimWorldWin64_Data/Managed</ManagedDir>
+    <ManagedDir Condition="'$(RimWorldVersion)' == '1.7'">$(GameDir)</ManagedDir>
+    <CombatExtendedReference Condition="'$(CombatExtendedReference)' == ''">$(GameDir)/Mods/CombatExtended/Assemblies/CombatExtended.dll</CombatExtendedReference>
+    <HarmonyReference Condition="'$(HarmonyReference)' == ''">$(GameDir)/Mods/Harmony/$(RimWorldVersion)/Assemblies/0Harmony.dll</HarmonyReference>
+    <ModularWeapons2Reference Condition="'$(ModularWeapons2Reference)' == ''">$(GameDir)/Mods/ModularWeapons2/$(RimWorldVersion)/Assemblies/ModularWeapons2.dll</ModularWeapons2Reference>
   </PropertyGroup>
 
-  <Target Name="ValidateBuildReferences" BeforeTargets="ResolveReferences">
-    <Error Condition="'$(RimWorld17Dir)' == ''" Text="Set RimWorld17Dir (or MW2CE_RIMWORLD17_DIR) to the RimWorld 1.7 game directory." />
-    <Error Condition="!Exists('$(RimWorld17Dir)\Assembly-CSharp.dll')" Text="RimWorld 1.7 Assembly-CSharp.dll was not found under $(RimWorld17Dir)." />
-    <Error Condition="!Exists('$(CombatExtendedReference)')" Text="Combat Extended reference assembly was not found at $(CombatExtendedReference)." />
-    <Error Condition="!Exists('$(HarmonyReference)')" Text="Harmony 1.7 assembly was not found at $(HarmonyReference)." />
-    <Error Condition="!Exists('$(ModularWeapons2Reference)')" Text="ModularWeapons2 1.7 assembly was not found at $(ModularWeapons2Reference)." />
+  <Target Name="ValidateBuildReferences" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="'$(GameDir)' == ''" Text="Set the game directory for RimWorld $(RimWorldVersion)." />
+    <Error Condition="!Exists('%(Reference.HintPath)') and '%(Reference.HintPath)' != ''" Text="Missing RimWorld $(RimWorldVersion) reference: %(Reference.HintPath)" />
   </Target>
 
   <ItemGroup>
     <Reference Include="0Harmony" HintPath="$(HarmonyReference)" Private="false" />
-    <Reference Include="Assembly-CSharp" HintPath="$(RimWorld17Dir)\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="Assembly-CSharp" HintPath="$(ManagedDir)/Assembly-CSharp.dll" Private="false" />
     <Reference Include="CombatExtended" HintPath="$(CombatExtendedReference)" Private="false" />
     <Reference Include="ModularWeapons2" HintPath="$(ModularWeapons2Reference)" Private="false" />
-    <Reference Include="UnityStubs" HintPath="$(RimWorld17Dir)\UnityStubs.dll" Private="false" />
-    <Reference Include="Waylith" HintPath="$(RimWorld17Dir)\Waylith.dll" Private="false" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(RimWorldVersion)' == '1.6'">
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(ManagedDir)/UnityEngine.CoreModule.dll" Private="false" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(RimWorldVersion)' == '1.7'">
+    <Reference Include="UnityStubs" HintPath="$(ManagedDir)/UnityStubs.dll" Private="false" />
+    <Reference Include="Waylith" HintPath="$(ManagedDir)/Waylith.dll" Private="false" />
   </ItemGroup>
 </Project>

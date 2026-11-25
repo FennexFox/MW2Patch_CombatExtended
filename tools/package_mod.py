@@ -1,4 +1,4 @@
-"""Assemble the 1.7 mod from the upstream assets, the rebuilt DLL and this fork's patches."""
+"""Assemble the dual-version mod from the upstream assets, version-specific DLLs and this fork's patches."""
 
 import argparse
 import hashlib
@@ -15,19 +15,23 @@ DLL = "Common/Assemblies/MW2Patch_CombatExtended.dll"
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("upstream", type=Path, help="Original MW2_CE.zip from Alpha0.3.3")
-    parser.add_argument("assembly", type=Path, help="MW2Patch_CombatExtended.dll built for 1.7")
+    parser.add_argument("assembly16", type=Path, help="Integration DLL built for net472")
+    parser.add_argument("assembly17", type=Path, help="Integration DLL built for net10.0")
     parser.add_argument("output", type=Path, help="Destination mod ZIP")
     args = parser.parse_args()
     if hashlib.sha256(args.upstream.read_bytes()).hexdigest() != UPSTREAM_SHA256:
         parser.error("Expected the original Alpha0.3.3 release archive.")
-    if args.output.resolve() in (args.upstream.resolve(), args.assembly.resolve()):
-        parser.error("Choose an output path distinct from both inputs.")
-    assembly = args.assembly.read_bytes()
+    if args.output.resolve() in {p.resolve() for p in (args.upstream, args.assembly16, args.assembly17)}:
+        parser.error("The output must be distinct from the input files.")
     with ZipFile(args.upstream) as upstream:
-        if assembly == upstream.read(DLL):
-            parser.error("The supplied assembly is the upstream 1.6 binary. Build the 1.7 project first.")
         files = {name: upstream.read(name) for name in upstream.namelist() if not name.endswith("/")}
-    files[DLL] = assembly
+    original = files.pop(DLL)
+    for version, path, framework in (("1.6", args.assembly16, b".NETFramework,Version=v4.7.2"),
+                                     ("1.7", args.assembly17, b".NETCoreApp,Version=v10.0")):
+        assembly = path.read_bytes()
+        if assembly == original or framework not in assembly or b"MW2Patch_CombatExtended" not in assembly:
+            parser.error(f"Expected a rebuilt RimWorld {version} integration assembly at {path}.")
+        files[f"{version}/Assemblies/MW2Patch_CombatExtended.dll"] = assembly
     for name in ("About/About.xml", "loadFolders.xml"):
         files[name] = (ROOT / "packaging" / name).read_bytes()
     for folder in ("Common", "CEAttachments"):
