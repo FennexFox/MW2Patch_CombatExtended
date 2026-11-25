@@ -8,7 +8,7 @@ This mod connects the ModularWeapons 2 (MW2) gunsmith workbench and parts system
 
 - Inspect the matching RimWorld version and add-on definitions before editing. Use exact defName values, including upstream spelling. Read inherited definitions and conditional patches when determining the effective configuration.
 - The C# solution contains the integration code. Start with MW2Patch_CombatExtended.cs and the relevant MW2PartsExtension_CE* file for changes to ammunition, fire modes, bipods, or underbarrel behavior. For weapon-specific slots and graphics, inspect the XML shipped with the matching MW2 and [patch release](https://github.com/kaitorisenkou/MW2Patch_CombatExtended/releases). Release archives can contain assets absent from the source checkout.
-- Make changes in the repository. Treat installed Workshop copies as reference inputs. Keep optional add-on definitions conditional so each supported add-on can load independently. Preserve existing weapon identifiers and saved configurations when extending support.
+- Make changes in the repository. Treat installed Workshop copies as reference inputs. Keep optional add-on definitions conditional so each supported add-on can load independently. Preserve weapon identifiers and saved configurations from published versions. During pre-release development, test save/load with the current definitions and omit migrations for superseded development builds.
 - Keep edits scoped to the issue. Preserve unrelated worktree changes and keep local binaries, workshop dependencies, build output, and player logs out of commits.
 
 ## Verification
