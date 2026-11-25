@@ -63,3 +63,11 @@ The revised XML seats those sights on the weapon sprites and raises the buried p
 ![Same-scale comparison of the original and revised in-game sprites](attachment-alignment.png)
 
 The revised installation ZIP has SHA-256 e63f83176003d88820d0b0f017016e8552ea7d53be1d4d5306076a66704afd06.
+
+## M72 optic selection
+
+The M72 now uses a medium sight mount because CE consumes the launcher on firing. In the Phase 1 configuration this removes the sniper scope and ultratech FCS from the workbench. All eight other sights and three side devices retain their previous draw layers and placement. Other weapons keep their existing mounts.
+
+MW2 stores the root mount ID with each installed part. With the XML change alone, a tube red dot in an old save disappeared when MW2 refreshed the weapon. The M72 component now migrates compatible optics to the medium mount during loading. A legacy red dot survived the refresh and rendered correctly. A legacy sniper scope cleared, leaving an empty sight slot. Both launchers could fit and remove a red dot afterward. The two legacy cases passed all ten checks on RimWorld 1.7.5014.
+
+The package passed 37/37 gameplay checks with CE core and 147/147 with CE Attachments. The first combined core run timed out waiting for the M72 shot. The standalone repeat confirmed the projectile and consumed the launcher. The optional configuration produced 147 game renders covering 104 single-part combinations. The 15 M72 images were identical across configurations. Tested ZIP SHA-256: `6de4c4db2708cd414d685d198bfd2a1e75843dc0ec803ede25289b42c018b3be`.

@@ -15,13 +15,14 @@
     <xpath>/Defs/ThingDef[defName="CE_DisposableRocketLauncher"]/comps</xpath>
     <value>
       <li Class="ModularWeapons2.CompProperties_ModularWeapon">
+        <compClass>MW2Patch_CombatExtended.CompModularWeapon_M72</compClass>
         <baseGraphicData>
           <texPath>Things/Weapons/CE_M72</texPath>
           <graphicClass>Graphic_Single</graphicClass>
         </baseGraphicData>
         <partsMounts>
           <li>
-            <mountDef>MountSight_Long</mountDef>
+            <mountDef>MountSight_Mid</mountDef>
             <offset>(0.0,0.14)</offset>
             <adapterGraphic>
               <texPath>ModularParts/Adapters/Upward</texPath>
