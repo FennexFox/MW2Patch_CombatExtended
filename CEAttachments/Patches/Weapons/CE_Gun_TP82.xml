@@ -36,7 +36,7 @@
               <!-- Keep the third barrel in CE's native underbarrel component. -->
               <li>
                 <mountDef>MountSight_Micro</mountDef>
-                <offset>(0.02,0.15)</offset>
+                <offset>(0.02,0.19)</offset>
                 <adapterGraphic>
                   <texPath>ModularParts/Adapters/Upward_Short</texPath>
                   <graphicClass>Graphic_Single</graphicClass>
@@ -45,7 +45,7 @@
               </li>
               <li>
                 <mountDef>MountTacDevice_Side</mountDef>
-                <offset>(0.12,0.02)</offset>
+                <offset>(0.12,0.073)</offset>
                 <adapterGraphic>
                   <texPath>ModularParts/Adapters/Side</texPath>
                   <graphicClass>Graphic_Single</graphicClass>

@@ -35,7 +35,7 @@
               <!-- LeMat's built-in lower barrel remains the CE underbarrel. -->
               <li>
                 <mountDef>MountSight_Micro</mountDef>
-                <offset>(-0.02,0.16)</offset>
+                <offset>(-0.02,0.175)</offset>
                 <adapterGraphic>
                   <texPath>ModularParts/Adapters/Upward_Short</texPath>
                   <graphicClass>Graphic_Single</graphicClass>
@@ -44,7 +44,7 @@
               </li>
               <li>
                 <mountDef>MountTacDevice_Side</mountDef>
-                <offset>(0.10,0.04)</offset>
+                <offset>(0.10,0.075)</offset>
                 <adapterGraphic>
                   <texPath>ModularParts/Adapters/Side</texPath>
                   <graphicClass>Graphic_Single</graphicClass>

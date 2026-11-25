@@ -49,7 +49,7 @@
               </li>
               <li>
                 <mountDef>MountTacDevice_Side</mountDef>
-                <offset>(0.20,0.03)</offset>
+                <offset>(0.18,-0.012)</offset>
                 <adapterGraphic>
                   <texPath>ModularParts/Adapters/Side</texPath>
                   <graphicClass>Graphic_Single</graphicClass>

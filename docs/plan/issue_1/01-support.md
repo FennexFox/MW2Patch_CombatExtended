@@ -52,4 +52,14 @@ The test pawn uses the fueled gunsmith workbench to customize a loaded KSG. Open
 
 With the tested CE revision, CE logs a failed XPath for SentienceCatalyst in its own Items_General.xml. The same error occurs with this patch disabled.
 
-On 2026-11-25 the final ZIP passed 37 of 37 runtime checks with CE core and 147 of 147 with CE Attachments enabled, on separate game maps and save profiles. All ten target weapon types retained their installed parts in a full game save/load round trip. Static checks confirmed that the patches preserve native CE verbs, components, stats, and sprite size. A sprite composition check informed mount placement. The tested ZIP has SHA-256 068bf12dcc7a4ab5f339386ce911d9b50700e73f1f277fc10686a8cf5bd07d14.
+On 2026-11-25 the final ZIP passed 37 of 37 runtime checks with CE core and 147 of 147 with CE Attachments enabled, on separate game maps and save profiles. All ten target weapon types retained their installed parts in a full game save/load round trip. Static checks confirmed that the patches preserve native CE verbs, components, stats, and sprite size. A sprite composition check informed mount placement. These gameplay results were recorded before the attachment alignment revision below.
+
+## Attachment alignment revision
+
+The first preview omitted optics that use intermediate adapters. The released coordinates left visible gaps on eight M79 sights, eight KSG sights and ten Double Badger sights. The flare gun had the opposite problem: its micro sight was drawn inside the barrel.
+
+The revised XML seats those sights on the weapon sprites and raises the buried pistol optics. The updated preview tool resolves inherited attachment mounts and intermediate adapters. For each of 106 single-part combinations, its texture names, draw order, offsets and scales matched the draw requests issued by MW2 in RimWorld 1.7.5014. We captured the resulting game textures for all ten weapons. All 26 previously separated sight variants now meet the weapon silhouette. The final run captured 149 images, including unmodified weapons, empty slots and fully equipped configurations.
+
+![Same-scale comparison of the original and revised in-game sprites](attachment-alignment.png)
+
+The revised installation ZIP has SHA-256 e63f83176003d88820d0b0f017016e8552ea7d53be1d4d5306076a66704afd06.

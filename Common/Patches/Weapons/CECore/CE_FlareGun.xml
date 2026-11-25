@@ -22,7 +22,7 @@
         <partsMounts>
           <li>
             <mountDef>MountSight_Micro</mountDef>
-            <offset>(0.02,0.14)</offset>
+            <offset>(0.02,0.218)</offset>
             <adapterGraphic>
               <texPath>ModularParts/Adapters/Upward_Short</texPath>
               <graphicClass>Graphic_Single</graphicClass>
@@ -31,7 +31,7 @@
           </li>
           <li>
             <mountDef>MountTacDevice_Side</mountDef>
-            <offset>(0.02,0.02)</offset>
+            <offset>(0.08,0.077)</offset>
             <adapterGraphic>
               <texPath>ModularParts/Adapters/Side</texPath>
               <graphicClass>Graphic_Single</graphicClass>

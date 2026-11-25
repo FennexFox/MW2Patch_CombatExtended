@@ -35,7 +35,7 @@
               <!-- The second barrel is CE's underbarrel channel and is left untouched. -->
               <li>
                 <mountDef>MountSight_Long</mountDef>
-                <offset>(0.02,0.15)</offset>
+                <offset>(0.02,0.102)</offset>
                 <adapterGraphic>
                   <texPath>ModularParts/Adapters/Upward</texPath>
                   <graphicClass>Graphic_Single</graphicClass>
@@ -44,7 +44,7 @@
               </li>
               <li>
                 <mountDef>MountTacDevice_Side</mountDef>
-                <offset>(0.18,0.03)</offset>
+                <offset>(0.16,0.033)</offset>
                 <adapterGraphic>
                   <texPath>ModularParts/Adapters/Side</texPath>
                   <graphicClass>Graphic_Single</graphicClass>

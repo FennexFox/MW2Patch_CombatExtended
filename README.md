@@ -23,6 +23,16 @@ dotnet build MW2Patch_CombatExtended.sln -c Release
 python tools/package_mod.py MW2_CE.zip MW2Patch_CombatExtended/bin/Release/MW2Patch_CombatExtended.dll artifacts/MW2_CE-1.7-phase1.zip
 ```
 
+### Check attachment placement
+
+With Python and Pillow installed, run the following command from the repository root. Point the three mod arguments to the directories containing each mod's `About` folder.
+
+```powershell
+python tools/preview_mounts.py --mw2 'path/to/ModularWeapons2' --ce 'path/to/CombatExtended' --attachments 'path/to/CombatExtendedAttachments' --output artifacts/mount-previews
+```
+
+Each sheet shows the original sprite and one XML composite per compatible part, including sights reached through adapters. Inspect the sight base against the rail, the muzzle part against the barrel end, and the side device against the body. The script flags disconnected layers. A sight buried in the receiver can still pass that check.
+
 ## If you have suggestions or found a bug/issue
 Please report it using one of the following methods:
 
