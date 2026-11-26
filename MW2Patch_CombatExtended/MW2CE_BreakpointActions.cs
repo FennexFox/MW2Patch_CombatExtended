@@ -1,4 +1,5 @@
 ﻿using CombatExtended;
+using HarmonyLib;
 using ModularWeapons2;
 using RimWorld;
 using RimWorld.Planet;
@@ -10,6 +11,11 @@ using Verse;
 
 namespace MW2Patch_CombatExtended {
     public static class MW2CE_BreakpointActions {
+        private static readonly AccessTools.FieldRef<CompFireModes, Verb> CachedFireModeVerb =
+            AccessTools.FieldRefAccess<CompFireModes, Verb>("verbInt");
+        private static readonly AccessTools.FieldRef<CompAmmoUser, AmmoDef> StoredCurrentAmmo =
+            AccessTools.FieldRefAccess<CompAmmoUser, AmmoDef>("currentAmmoInt");
+
         public static void PostOpenGunsmith(Thing thing) {
             /* What to code here is:
              *   Unload magazine 
@@ -34,68 +40,153 @@ namespace MW2Patch_CombatExtended {
             }
         }
         public static void RefleshParts(CompModularWeapon comp) {
-            /* What to code here is:
-             *   Make following comp affected by CompModularWeapons;
-             *     BipodComp
-             *     CompFireModes
-             *     CompAmmoUser
-             *     CompUnderbarrel
-             *     
-             *   ** Done, need debug **
-             */
+            if (comp?.parent == null) {
+                return;
+            }
 
             var thing = comp.parent;
-
-            //CompAmmoUser
-            var newProp_AmmoUser = comp.GetCompProps_AmmoUser();
-            if (newProp_AmmoUser != null) {
-                /*compAmmo.props = newProp_AmmoUser;
-                if (!compAmmo.CurrentAmmo.AmmoSetDefs.Contains(newProp_AmmoUser.ammoSet)) {
-                    compAmmo.CurrentAmmo = newProp_AmmoUser.ammoSet.ammoTypes[0].ammo;
-                }*/
-                var compAmmo = thing.TryGetComp<CompAmmoUser>();
-                if (compAmmo != null) {
-                    compAmmo.CurrentAmmo = null;
-                    compAmmo.SelectedAmmo = null;
-                    compAmmo.Initialize(newProp_AmmoUser);
-                }
-            }
-
-            //CompFireModes
-            var newProp_FireModes = comp.GetCompProps_FireModes();
-            if(newProp_FireModes != null) {
-                var compFMode = thing.TryGetComp<CompFireModes>();
-                if (compFMode != null) {
-                    compFMode.Initialize(newProp_FireModes);
-                }
-            }
-
-            //BipodComp
+            var compAmmo = thing.TryGetComp<CompAmmoUser>();
+            var compFireModes = thing.TryGetComp<CompFireModes>();
             var compBipod = thing.TryGetComp<BipodComp>();
-            if (compBipod != null) {
-                //var bipodProp = compBipod.Props;
-                var bipodProp = new CompProperties_BipodComp();
-                bipodProp.catDef = GetBipodCatDef(comp);
-                bipodProp.swayMult = bipodProp.catDef.swayMult;
-                bipodProp.swayPenalty = bipodProp.catDef.swayPenalty;
-                bipodProp.additionalrange = bipodProp.catDef.ad_Range;
-                bipodProp.recoilMulton = bipodProp.catDef.recoil_mult_setup;
-                bipodProp.recoilMultoff = bipodProp.catDef.recoil_mult_NOT_setup;
-                bipodProp.ticksToSetUp = bipodProp.catDef.setuptime;
-                bipodProp.warmupMult = bipodProp.catDef.warmup_mult_setup;
-                bipodProp.warmupPenalty = bipodProp.catDef.warmup_mult_NOT_setup;
+            var compUnderBarrel = thing.TryGetComp<CompUnderBarrel>();
+            var usingSecondary = compUnderBarrel?.usingUnderBarrel == true;
 
-                compBipod.props = bipodProp;
+            // MW2 has rebuilt the weapon's verbs, even when only an optic changed.
+            if (compFireModes != null) {
+                CachedFireModeVerb(compFireModes) = null;
             }
 
-            //CompUnderBarrel
-            var compUB = thing.TryGetComp<CompUnderBarrel>();
-            if (compUB != null) {
-                compUB._defVerbProps = null;
-                compUB._compPropsAmmo = newProp_AmmoUser;
-                compUB._compPropsFireModes = newProp_FireModes;
-                compUB.props = comp.GetCompProps_UnderBarrel();
+            var baseAmmoProps = thing.def.comps?.FirstOrDefault(x => x is CompProperties_AmmoUser) as CompProperties_AmmoUser;
+            var desiredAmmoProps = comp.GetCompProps_AmmoUser();
+            var hasAmmoExtensions = desiredAmmoProps != null && !ReferenceEquals(desiredAmmoProps, baseAmmoProps);
+            var currentPrimaryAmmoProps = compUnderBarrel?._compPropsAmmo
+                ?? (usingSecondary ? baseAmmoProps : compAmmo?.props as CompProperties_AmmoUser);
+            var shouldRefreshAmmo = desiredAmmoProps != null
+                && (hasAmmoExtensions || !ReferenceEquals(currentPrimaryAmmoProps, baseAmmoProps));
+
+            if (shouldRefreshAmmo) {
+                if (compUnderBarrel != null) {
+                    compUnderBarrel._compPropsAmmo = desiredAmmoProps;
+                }
+
+                if (compAmmo != null) {
+                    if (usingSecondary) {
+                        if (compUnderBarrel.mainGunLoadedAmmo != null
+                            && !AmmoSetContains(desiredAmmoProps, compUnderBarrel.mainGunLoadedAmmo)) {
+                            compUnderBarrel.mainGunLoadedAmmo = FirstAmmo(desiredAmmoProps);
+                            compUnderBarrel.mainGunMagCount = 0;
+                        }
+                        compUnderBarrel.mainGunMagCount = Math.Min(
+                            compUnderBarrel.mainGunMagCount,
+                            Math.Max(0, desiredAmmoProps.magazineSize));
+                    }
+                    else {
+                        // CE hides CurrentAmmo while its ammo system is disabled.
+                        var currentAmmo = StoredCurrentAmmo(compAmmo);
+                        var selectedAmmo = compAmmo.SelectedAmmo;
+                        compAmmo.Initialize(desiredAmmoProps);
+
+                        if (currentAmmo != null && AmmoSetContains(desiredAmmoProps, currentAmmo)) {
+                            compAmmo.CurrentAmmo = currentAmmo;
+                        }
+                        else if (currentAmmo != null) {
+                            compAmmo.CurrentAmmo = FirstAmmo(desiredAmmoProps);
+                            compAmmo.CurMagCount = 0;
+                        }
+
+                        if (selectedAmmo != null && AmmoSetContains(desiredAmmoProps, selectedAmmo)) {
+                            compAmmo.SelectedAmmo = selectedAmmo;
+                        }
+                        else {
+                            compAmmo.SelectedAmmo = StoredCurrentAmmo(compAmmo);
+                        }
+
+                        compAmmo.CurMagCount = Math.Min(
+                            compAmmo.CurMagCount,
+                            Math.Max(0, desiredAmmoProps.magazineSize));
+                    }
+                }
             }
+
+            var desiredFireModeProps = comp.GetCompProps_FireModes();
+            // A part can change the primary verb's burst count without changing the CE props.
+            if (desiredFireModeProps != null) {
+                if (compUnderBarrel != null) {
+                    compUnderBarrel._compPropsFireModes = desiredFireModeProps;
+                }
+                if (compFireModes != null && !usingSecondary) {
+                    compFireModes.Initialize(desiredFireModeProps);
+                }
+            }
+
+            var baseBipodProps = thing.def.comps?.FirstOrDefault(x => x is CompProperties_BipodComp) as CompProperties_BipodComp;
+            var bipodExtension = comp.GetFirstModExtensionsFromParts<MW2PartsExtension_CEBipod>();
+            if (compBipod != null
+                && (bipodExtension != null || !ReferenceEquals(compBipod.props, baseBipodProps))) {
+                if (bipodExtension == null) {
+                    compBipod.props = baseBipodProps;
+                }
+                else {
+                    var category = bipodExtension.categoryDef ?? baseBipodProps?.catDef ?? MW2CE_DefOf.MW2CE_noBipod;
+                    if (category != null) {
+                        compBipod.props = new CompProperties_BipodComp {
+                            catDef = category,
+                            swayMult = category.swayMult,
+                            swayPenalty = category.swayPenalty,
+                            additionalrange = category.ad_Range,
+                            recoilMulton = category.recoil_mult_setup,
+                            recoilMultoff = category.recoil_mult_NOT_setup,
+                            ticksToSetUp = category.setuptime,
+                            warmupMult = category.warmup_mult_setup,
+                            warmupPenalty = category.warmup_mult_NOT_setup
+                        };
+                    }
+                }
+            }
+
+            var baseUnderBarrelProps = thing.def.comps?.FirstOrDefault(x => x is CompProperties_UnderBarrel) as CompProperties_UnderBarrel;
+            var underBarrelExtension = comp.GetFirstModExtensionsFromParts<MW2PartsExtension_CEUnderbarrel>();
+            var desiredUnderBarrelProps = underBarrelExtension?.underBarrelProps ?? baseUnderBarrelProps;
+            var shouldRefreshUnderBarrel = compUnderBarrel != null
+                && (underBarrelExtension != null || !ReferenceEquals(compUnderBarrel.props, baseUnderBarrelProps));
+            if (shouldRefreshUnderBarrel) {
+                compUnderBarrel.props = desiredUnderBarrelProps;
+            }
+
+            if (compUnderBarrel != null) {
+                // The DefVerbProps prefix repopulates this from MW2's latest verb override.
+                // Do not switch barrels here: an active KSG secondary magazine must stay active.
+                compUnderBarrel._defVerbProps = null;
+
+                if (usingSecondary) {
+                    var secondaryProps = compUnderBarrel.Props;
+                    if (compAmmo != null && secondaryProps?.propsUnderBarrel != null) {
+                        compAmmo.props = secondaryProps.propsUnderBarrel;
+                    }
+                    if (compFireModes != null && secondaryProps?.propsFireModesUnderBarrel != null) {
+                        compFireModes.props = secondaryProps.propsFireModesUnderBarrel;
+                    }
+
+                    var primaryVerb = compUnderBarrel.CompEq?.PrimaryVerb;
+                    if (primaryVerb != null && secondaryProps?.verbPropsUnderBarrel != null) {
+                        primaryVerb.verbProps = secondaryProps.verbPropsUnderBarrel;
+                        AccessTools.Field(typeof(Verb), "cachedTicksBetweenBurstShots")?.SetValue(primaryVerb, null);
+                    }
+
+                    if (compFireModes != null) {
+                        compFireModes.InitAvailableFireModes();
+                    }
+                }
+            }
+        }
+
+        private static bool AmmoSetContains(CompProperties_AmmoUser props, AmmoDef ammo) {
+            return ammo != null
+                && props?.ammoSet?.ammoTypes?.Any(link => link.ammo == ammo) == true;
+        }
+
+        private static AmmoDef FirstAmmo(CompProperties_AmmoUser props) {
+            return props?.ammoSet?.ammoTypes?.FirstOrDefault()?.ammo;
         }
 
 

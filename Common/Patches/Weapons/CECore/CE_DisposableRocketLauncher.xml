@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <!-- Each modular weapon stores its own parts. -->
+  <Operation Class="PatchOperationReplace">
+    <xpath>/Defs/ThingDef[defName="CE_DisposableRocketLauncher"]/stackLimit</xpath>
+    <value>
+      <stackLimit>1</stackLimit>
+    </value>
+  </Operation>
+  <Operation Class="PatchOperationReplace">
+    <xpath>/Defs/ThingDef[defName="CE_DisposableRocketLauncher"]/graphicData</xpath>
+    <value>
+      <graphicData>
+        <texPath>Things/Weapons/CE_M72</texPath>
+        <graphicClass>ModularWeapons2.Graphic_UniqueByComp</graphicClass>
+        <drawSize>2</drawSize>
+      </graphicData>
+    </value>
+  </Operation>
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/ThingDef[defName="CE_DisposableRocketLauncher"]/comps</xpath>
+    <value>
+      <li>
+        <compClass>MW2Patch_CombatExtended.CompM72StackCompatibility</compClass>
+      </li>
+      <li Class="ModularWeapons2.CompProperties_ModularWeapon">
+        <baseGraphicData>
+          <texPath>Things/Weapons/CE_M72</texPath>
+          <graphicClass>Graphic_Single</graphicClass>
+        </baseGraphicData>
+        <partsMounts>
+          <li>
+            <mountDef>MountSight_Mid</mountDef>
+            <offset>(0.0,0.14)</offset>
+            <adapterGraphic>
+              <texPath>ModularParts/Adapters/Upward</texPath>
+              <graphicClass>Graphic_Single</graphicClass>
+            </adapterGraphic>
+            <layerOrder>1</layerOrder>
+          </li>
+          <li>
+            <mountDef>MountTacDevice_Side</mountDef>
+            <offset>(0.08,0.02)</offset>
+            <adapterGraphic>
+              <texPath>ModularParts/Adapters/Side</texPath>
+              <graphicClass>Graphic_Single</graphicClass>
+            </adapterGraphic>
+            <layerOrder>1</layerOrder>
+          </li>
+        </partsMounts>
+      </li>
+    </value>
+  </Operation>
+</Patch>

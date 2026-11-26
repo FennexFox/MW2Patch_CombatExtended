@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <!-- Preserve CE_FlareGun's flare verb, charge component, and flare ammo. -->
+  <Operation Class="PatchOperationReplace">
+    <xpath>/Defs/ThingDef[defName="CE_FlareGun"]/graphicData</xpath>
+    <value>
+      <graphicData>
+        <texPath>Things/Weapons/CE_FlareGun</texPath>
+        <graphicClass>ModularWeapons2.Graphic_UniqueByComp</graphicClass>
+        <drawSize>2</drawSize>
+      </graphicData>
+    </value>
+  </Operation>
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/ThingDef[defName="CE_FlareGun"]/comps</xpath>
+    <value>
+      <li Class="ModularWeapons2.CompProperties_ModularWeapon">
+        <baseGraphicData>
+          <texPath>Things/Weapons/CE_FlareGun</texPath>
+          <graphicClass>Graphic_Single</graphicClass>
+        </baseGraphicData>
+        <partsMounts>
+          <li>
+            <mountDef>MountSight_Micro</mountDef>
+            <offset>(0.02,0.218)</offset>
+            <adapterGraphic>
+              <texPath>ModularParts/Adapters/Upward_Short</texPath>
+              <graphicClass>Graphic_Single</graphicClass>
+            </adapterGraphic>
+            <layerOrder>1</layerOrder>
+          </li>
+          <li>
+            <mountDef>MountTacDevice_Side</mountDef>
+            <offset>(0.08,0.077)</offset>
+            <adapterGraphic>
+              <texPath>ModularParts/Adapters/Side</texPath>
+              <graphicClass>Graphic_Single</graphicClass>
+            </adapterGraphic>
+            <layerOrder>2</layerOrder>
+          </li>
+        </partsMounts>
+      </li>
+    </value>
+  </Operation>
+</Patch>

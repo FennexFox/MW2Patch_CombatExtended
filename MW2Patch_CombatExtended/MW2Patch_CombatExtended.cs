@@ -44,6 +44,9 @@ namespace MW2Patch_CombatExtended {
                 AccessTools.Method(typeof(CompFireModes), nameof(CompFireModes.Initialize)),
                 postfix: new HarmonyMethod(typeof(MW2Patch_CombatExtended), nameof(Postfix_CompFireModeInit), null));
             harmony.Patch(
+                AccessTools.Method(typeof(CompFireModes), nameof(CompFireModes.InitAvailableFireModes)),
+                prefix: new HarmonyMethod(typeof(MW2Patch_CombatExtended), nameof(Prefix_InitAvailableFireModes)));
+            harmony.Patch(
                 AccessTools.Method(typeof(PawnCapacityUtility), nameof(PawnCapacityUtility.CalculateNaturalPartsAverageEfficiency)),
                 prefix: new HarmonyMethod(typeof(MW2Patch_CombatExtended), nameof(Prefix_CalculateNaturalPartsAverageEfficiency), null));
             harmony.Patch(
@@ -224,6 +227,13 @@ namespace MW2Patch_CombatExtended {
             ___verbInt = null;
         }
 
+        static void Prefix_InitAvailableFireModes(CompFireModes __instance) {
+            // CE clears fire modes but appends aim modes each time a modular verb is rebuilt.
+            if (__instance.parent.TryGetComp<CompModularWeapon>() != null) {
+                __instance.AvailableAimModes.Clear();
+            }
+        }
+
         /// <summary>
         /// Rimworld本体のバグ修正
         /// 
@@ -395,21 +405,23 @@ namespace MW2Patch_CombatExtended {
         }
         public static float GetOverriddenShotSpread(float defaultValue, Verb_LaunchProjectileCE verb) {
             DebugLogMessage("[MW2CE] GetOverriddenShotSpread: defaultValue " + defaultValue);
-            var eq = verb?.EquipmentSource;
-            if (eq == null) {
+            var equipment = verb?.EquipmentSource;
+            var underBarrel = equipment?.TryGetComp<CompUnderBarrel>();
+            if (underBarrel == null || !underBarrel.usingUnderBarrel) {
                 return defaultValue;
             }
-            var compUB = eq.TryGetComp<CompUnderBarrel>();
-            if (compUB == null || !compUB.usingUnderBarrel) {
-                return defaultValue;
-            }
-            var ext =
-                verb?.EquipmentSource?.TryGetComp<CompModularWeapon>()?
+
+            var modularWeapon = equipment.TryGetComp<CompModularWeapon>();
+            var extensions = modularWeapon?
                 .GetAllModExtensionsFromParts<MW2PartsExtension_CEUnderbarrel>();
-            foreach(var i in ext) {
-                if (i.ShotSpreadOverride >= 0) {
-                    DebugLogMessage("[MW2CE] override in GetOverriddenShotSpread -> " + i.ShotSpreadOverride);
-                    return i.ShotSpreadOverride;
+            if (extensions == null) {
+                return defaultValue;
+            }
+
+            foreach (var extension in extensions) {
+                if (extension != null && extension.ShotSpreadOverride >= 0) {
+                    DebugLogMessage("[MW2CE] override in GetOverriddenShotSpread -> " + extension.ShotSpreadOverride);
+                    return extension.ShotSpreadOverride;
                 }
             }
             return defaultValue;
