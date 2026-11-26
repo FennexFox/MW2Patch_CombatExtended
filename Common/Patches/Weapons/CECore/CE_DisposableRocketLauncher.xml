@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Patch>
-  <!-- The one-use CE verb remains untouched; the modular component only supplies part graphics. -->
+  <!-- Each modular weapon stores its own parts. -->
+  <Operation Class="PatchOperationReplace">
+    <xpath>/Defs/ThingDef[defName="CE_DisposableRocketLauncher"]/stackLimit</xpath>
+    <value>
+      <stackLimit>1</stackLimit>
+    </value>
+  </Operation>
   <Operation Class="PatchOperationReplace">
     <xpath>/Defs/ThingDef[defName="CE_DisposableRocketLauncher"]/graphicData</xpath>
     <value>
@@ -14,6 +20,9 @@
   <Operation Class="PatchOperationAdd">
     <xpath>/Defs/ThingDef[defName="CE_DisposableRocketLauncher"]/comps</xpath>
     <value>
+      <li>
+        <compClass>MW2Patch_CombatExtended.CompM72StackCompatibility</compClass>
+      </li>
       <li Class="ModularWeapons2.CompProperties_ModularWeapon">
         <baseGraphicData>
           <texPath>Things/Weapons/CE_M72</texPath>
